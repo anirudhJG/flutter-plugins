@@ -10,7 +10,7 @@ typedef OnHistoryChangedCallback = void Function(
 
 /// Callback when WebView start to load a URL.
 /// [url] is the URL string.
-typedef OnUrlRequestCallback = bool Function(String url);
+typedef OnUrlRequestCallback = void Function(String url);
 
 /// Callback when WebView receives a web message
 /// [message] constains the webmessage
@@ -35,7 +35,7 @@ abstract class Webview {
   void setPromptHandler(PromptHandler? handler);
 
   /// Navigates to the given URL.
-  void launch(String url, {bool triggerOnUrlRequestEvent=true});
+  void launch(String url);
 
   /// change webview theme.
   ///
@@ -55,16 +55,8 @@ abstract class Webview {
 
   /// Show or hide webview window
   Future<void> setWebviewWindowVisibility(bool visible);
-
-  /// Move and Resize the webview window
-  Future<void> moveWebviewWindow(int left, int top, int width, int height);
-
   /// Activates the webview window (giving it the focus)
-  Future<void> bringToForeground({bool maximized = false});
-
-  /// get position, extents and maximization info of the webview window
-  Future<Map<dynamic,dynamic>?> getPositionalParameters();
-
+Future<void> bringToForeground({bool maximized = false});
   /// Reload the current page.
   Future<void> reload();
 
@@ -77,7 +69,9 @@ abstract class Webview {
   /// Register a callback that will be invoked when the webview history changes.
   void setOnHistoryChangedCallback(OnHistoryChangedCallback? callback);
 
-  void setOnUrlRequestCallback(OnUrlRequestCallback? callback);
+  void addOnUrlRequestCallback(OnUrlRequestCallback callback);
+
+  void removeOnUrlRequestCallback(OnUrlRequestCallback callback);
 
   void addOnWebMessageReceivedCallback(OnWebMessageReceivedCallback callback);
 

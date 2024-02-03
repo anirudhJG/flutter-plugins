@@ -139,12 +139,12 @@ class WebviewWindow {
         break;
       case "onUrlRequested":
         final url = args['url'] as String;
-        final ret = webview.notifyUrlChanged(url);
+        webview.notifyUrlChanged(url);
         await _otherIsolateMessageHandler.invokeMethod('onUrlRequested', {
           'webViewId': viewId,
           'url': url,
         });
-        return ret;
+        break;
       case "onWebMessageReceived":
         final message = args['message'] as String;
         webview.notifyWebMessageReceived(message);

@@ -7,10 +7,10 @@ import 'package:path_provider/path_provider.dart';
 
 void main(List<String> args) {
   debugPrint('args: $args');
-  WidgetsFlutterBinding.ensureInitialized();
   if (runWebViewTitleBarWidget(args)) {
     return;
   }
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -138,15 +138,13 @@ class _MyAppState extends State<MyApp> {
       ..setBrightness(Brightness.dark)
       ..setApplicationNameForUserAgent(" WebviewExample/1.0.0")
       ..launch(_controller.text)
-      ..setOnUrlRequestCallback((url) {
+      ..addOnUrlRequestCallback((url) {
         debugPrint('url: $url');
         final uri = Uri.parse(url);
         if (uri.path == '/login_success') {
           debugPrint('login success. token: ${uri.queryParameters['token']}');
           webview.close();
         }
-        // grant navigation request
-        return true;
       })
       ..onClose.whenComplete(() {
         debugPrint("on close");

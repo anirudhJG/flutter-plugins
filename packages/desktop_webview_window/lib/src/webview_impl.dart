@@ -22,9 +22,9 @@ class WebviewImpl extends Webview {
 
   OnHistoryChangedCallback? _onHistoryChanged;
 
-  final ValueNotifier<bool> _isNavigating = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _isNaivgating = ValueNotifier<bool>(false);
 
-  OnUrlRequestCallback? _onUrlRequestCallback = null;
+  final Set<OnUrlRequestCallback> _onUrlRequestCallbacks = {};
 
   final Set<OnWebMessageReceivedCallback> _onWebMessageReceivedCallbacks = {};
 
@@ -57,14 +57,12 @@ class WebviewImpl extends Webview {
   }
 
   void onNavigationStarted() {
-    _isNavigating.value = true;
+    _isNaivgating.value = true;
   }
 
-  bool notifyUrlChanged(String url) {
-    if(_onUrlRequestCallback != null) {
-      return _onUrlRequestCallback!(url);
-    } else {
-      return true;
+  void notifyUrlChanged(String url) {
+    for (final callback in _onUrlRequestCallbacks) {
+      callback(url);
     }
   }
 
@@ -75,11 +73,11 @@ class WebviewImpl extends Webview {
   }
 
   void onNavigationCompleted() {
-    _isNavigating.value = false;
+    _isNaivgating.value = false;
   }
 
   @override
-  ValueListenable<bool> get isNavigating => _isNavigating;
+  ValueListenable<bool> get isNavigating => _isNaivgating;
 
   @override
   void registerJavaScriptMessageHandler(
@@ -123,11 +121,10 @@ class WebviewImpl extends Webview {
   }
 
   @override
-  void launch(String url, {bool triggerOnUrlRequestEvent=true}) async {
+  void launch(String url) async {
     await channel.invokeMethod("launch", {
       "url": url,
       "viewId": viewId,
-      "triggerOnUrlRequestEvent": triggerOnUrlRequestEvent,
     });
   }
 
@@ -182,28 +179,10 @@ class WebviewImpl extends Webview {
   }
 
   @override
-  Future<void> moveWebviewWindow(int left, int top, int width, int height) {
-    return channel.invokeMethod("moveWebviewWindow", {
-      "viewId": viewId,
-      "left": left,
-      "top": top,
-      "width": width,
-      "height": height,
-    });
-  }
-
-  @override
   Future<void> bringToForeground({bool maximized = false}) {
     return channel.invokeMethod("bringToForeground", {
       "viewId": viewId,
       "maximized": maximized,
-    });
-  }
-
-  @override
-  Future<Map<dynamic,dynamic>?> getPositionalParameters() async {
-    return await channel.invokeMethod("getPositionalParameters", {
-      "viewId": viewId,
     });
   }
 
@@ -233,8 +212,13 @@ class WebviewImpl extends Webview {
   }
 
   @override
-  void setOnUrlRequestCallback(OnUrlRequestCallback? callback) {
-    _onUrlRequestCallback = callback;
+  void addOnUrlRequestCallback(OnUrlRequestCallback callback) {
+    _onUrlRequestCallbacks.add(callback);
+  }
+
+  @override
+  void removeOnUrlRequestCallback(OnUrlRequestCallback callback) {
+    _onUrlRequestCallbacks.remove(callback);
   }
 
   @override
