@@ -60,6 +60,8 @@ class WebviewWindow {
 
    void bringToForeground(bool maximized);
 
+   void setMinimize(bool minimized);
+
   [[nodiscard]] const std::unique_ptr<webview_window::WebView> &GetWebView() const {
     return web_view_;
   }

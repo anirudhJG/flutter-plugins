@@ -187,6 +187,14 @@ class WebviewImpl extends Webview {
   }
 
   @override
+  Future<void> setMinimize(bool minimize) {
+    return channel.invokeMethod("setMinimize", {
+      "viewId": viewId,
+      "minimized": minimize,
+    });
+  }
+
+  @override
   Future<void> back() {
     return channel.invokeMethod("back", {"viewId": viewId});
   }
