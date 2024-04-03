@@ -164,6 +164,15 @@ void WebviewWindow::bringToForeground(bool maximized)
     ::ShowWindow(hwnd_.get(), SW_MAXIMIZE);
   }
 }
+
+void WebviewWindow::setMinimize(bool minimized)
+{
+    SetForegroundWindow(hwnd_.get());
+    if (minimized)
+    {
+        ::ShowWindow(hwnd_.get(), SW_FORCEMINIMIZE);
+    }
+}
 // static
 LRESULT CALLBACK
 WebviewWindow::WndProc(
