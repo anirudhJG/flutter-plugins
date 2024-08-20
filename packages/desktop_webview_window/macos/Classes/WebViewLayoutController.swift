@@ -87,7 +87,7 @@ class WebViewLayoutController: NSViewController {
     webView.uiDelegate = self
 
     // TODO(boyan01) Make it configuable from flutter.
-    webView.configuration.preferences.javaEnabled = true
+    webView.configuration.preferences.javaEnabled = false
     webView.configuration.preferences.minimumFontSize = 12
     webView.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
     webView.configuration.allowsAirPlayForMediaPlayback = true
